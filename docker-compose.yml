@@ -1,0 +1,34 @@
+version: "3.3"
+
+services:
+  
+  postgesql:
+    image: postgres:12-alpine
+    container_name: postgesql
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=auth_db
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - bank_app
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ./rabbitmq/data/:/var/lib/rabbitmq/
+        # - ./rabbitmq/log/:/var/log/rabbitmq/
+    networks:
+        - bank_app
+
+networks:
+  bank_app:
+    driver: bridge
