@@ -1,6 +1,25 @@
 version: "3.3"
 
 services:
+
+  web: 
+    container_name: api
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+    depends_on:
+      - postgesql
+      - rabbitmq
+    restart: always
+    command: /bank_app
+    volumes:
+      - ./:/app
+    networks:
+      - bank_app
   
   postgesql:
     image: postgres:12-alpine
