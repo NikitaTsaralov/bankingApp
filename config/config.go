@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"log"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -14,8 +15,10 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	AppVersion string
-	Port       string
+	AppVersion   string
+	Port         string
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
 }
 
 type PostgresConfig struct {
