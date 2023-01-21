@@ -15,6 +15,7 @@ services:
       - postgesql
       - rabbitmq
     restart: always
+    # tty: true
     command: /bank_app
     volumes:
       - ./:/app
