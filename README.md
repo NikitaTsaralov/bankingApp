@@ -16,6 +16,13 @@
 
 > Ваше решение будет оцениваться по критериям понятности и поддерживаемости - гипотетические члены вашей команды не должны тратить лишнее время на расшифровку вашего замысла, исследуя вашу архитектуру или читая ваш код.
 
+## Referenced projects:
+
+* https://github.com/AleksK1NG/Go-Clean-Architecture-REST-API
+* https://github.com/antsla/saga
+* https://github.com/Duomly/go-bank-backend
+* https://github.com/isayme/go-amqp-reconnect/blob/master/rabbitmq/rabbitmq.go
+
 ### Обязательно:
 * Необходимо использовать postgresql в качестве бд.
 * Если у вас будет несколько сервисов, которые общаются друг с другом, они _должны_ общаться по grpc.
@@ -31,7 +38,7 @@
 2. Tests from config files
 3. Transaction types in config
 4. Fix tests (test depend on each other)
-5. Logger to zap
+5. fix logging + Logger to zap
 6. Migration create sql script
 
 # TODOs must

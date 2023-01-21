@@ -22,31 +22,16 @@ func (migration *Migration) Init(config *config.Config) (err error) {
 }
 
 func (migration *Migration) setup() error {
-	transactionTypes := &[2]models.TransactionType{
-		{
-			Name: "AddSum",
-		},
-		{
-			Name: "WithdrawSum",
-		},
-	}
-
-	for _, transactionType := range transactionTypes {
-		if dbc := migration.database.Create(&transactionType); dbc.Error != nil {
-			return fmt.Errorf("gorm.DB.Create %v failed: %v", transactionType, dbc.Error)
-		}
-	}
 	return nil
 }
 
 func (migration *Migration) Migrate() error {
 	users := &models.User{}
 	accounts := &models.Account{}
-	transactionTypes := &models.TransactionType{}
 	transactions := &models.Transaction{}
 
 	// create tables
-	if dbc := migration.database.AutoMigrate(&users, &accounts, &transactionTypes, &transactions); dbc.Error != nil {
+	if dbc := migration.database.AutoMigrate(&users, &accounts, &transactions); dbc.Error != nil {
 		return fmt.Errorf("gorm.DB.AutoMigrate failed: %v", dbc.Error)
 	}
 

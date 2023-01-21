@@ -15,6 +15,9 @@ const (
 	connMaxIdleTime = 20
 )
 
+// Create global variable
+var DB *gorm.DB
+
 // Create InitDatabase function
 func Init(c *config.Config) (DB *gorm.DB, err error) {
 	dataSourceName := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
@@ -41,6 +44,7 @@ func Init(c *config.Config) (DB *gorm.DB, err error) {
 	database.DB().SetConnMaxLifetime(connMaxLifetime)
 	database.DB().SetMaxIdleConns(connMaxIdleTime)
 	database.DB().SetConnMaxIdleTime(connMaxIdleTime)
+	DB = database
 
 	if err = database.DB().Ping(); err != nil {
 		return nil, fmt.Errorf("error db ping: %v", err)

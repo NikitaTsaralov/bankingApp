@@ -1,9 +1,18 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+)
 
 type Transaction struct {
 	gorm.Model
-	Type   uint
-	Amount int
+	AccountId uint
+	Account   Account `gorm:"foreignKey:AccountId"`
+	Amount    float64
+}
+
+type ResponseTransaction struct {
+	ID        uint    `json:"id,omitempty"`
+	AccountId uint    `json:"account_id"`
+	Amount    float64 `json:"amount" validate:"required"`
 }

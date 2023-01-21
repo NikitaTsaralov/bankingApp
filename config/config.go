@@ -11,12 +11,18 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
-	RabbitMQ RabbitConfig
+	Rabbit   RabbitConfig
+}
+
+type ServiceConfig struct {
+	Postgres PostgresConfig
+	Rabbit   RabbitConfig
 }
 
 type ServerConfig struct {
 	AppVersion   string
 	Port         string
+	Queue        string
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
 }
@@ -36,6 +42,7 @@ type RabbitConfig struct {
 	RabbitPort     string
 	RabbitUser     string
 	RabbitPassword string
+	Queue          string
 }
 
 func LoadConfig(filename string) (*viper.Viper, error) {

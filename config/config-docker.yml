@@ -1,6 +1,7 @@
 server:
   AppVersion: 1.0.0
   Port: :5000
+  Queue: task_queue
   
 postgres:
   PostgresqlHost: postgesql
@@ -16,3 +17,5 @@ rabbit:
   RabbitPort: 5672
   RabbitUser: guest
   RabbitPassword: guest
+  Queue: task_queue
+  

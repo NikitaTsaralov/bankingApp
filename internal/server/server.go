@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/NikitaTsaralov/bankingApp/config"
+	"github.com/NikitaTsaralov/bankingApp/pkg/rabbitmq"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 )
@@ -22,30 +23,39 @@ const (
 type Server struct {
 	echo   *echo.Echo
 	cfg    *config.Config
+	broker *rabbitmq.RabbitMQClient
 	db     *gorm.DB // or it will be inside service
 	logger *log.Logger
 }
 
-func Init(cfg *config.Config, db *gorm.DB) *Server {
+func Init(cfg *config.Config, db *gorm.DB, broker *rabbitmq.RabbitMQClient, logger *log.Logger) *Server {
 	return &Server{
+		echo:   echo.New(),
 		cfg:    cfg,
 		db:     db,
-		logger: &log.Logger{},
+		broker: broker,
+		logger: logger,
 	}
 }
 
-func (server *Server) Run() error {
-	httpServer := &http.Server{
-		Addr:           server.cfg.Server.Port,
-		ReadTimeout:    time.Second * server.cfg.Server.ReadTimeout,
-		WriteTimeout:   time.Second * server.cfg.Server.WriteTimeout,
+func (s *Server) Run() error {
+	server := &http.Server{
+		Addr:           s.cfg.Server.Port,
+		ReadTimeout:    time.Second * s.cfg.Server.ReadTimeout,
+		WriteTimeout:   time.Second * s.cfg.Server.WriteTimeout,
 		MaxHeaderBytes: maxHeaderBytes,
 	}
 
+	s.echo.POST("/putMoney", s.putMoney)
+	s.echo.POST("/getMoney", s.getMoney)
+
+	s.echo.POST("/login", s.Login)
+	s.echo.PUT("/register", s.Register)
+
 	go func() {
-		server.logger.Printf("Server is listening on PORT: %s", server.cfg.Server.Port)
-		if err := server.echo.StartServer(httpServer); err != nil {
-			server.logger.Fatal("Error starting Server: ", err)
+		log.Printf("Server is listening on PORT: %s", s.cfg.Server.Port)
+		if err := s.echo.StartServer(server); err != nil {
+			log.Fatal("Error starting Server: ", err)
 		}
 	}()
 
@@ -57,6 +67,6 @@ func (server *Server) Run() error {
 	ctx, shutdown := context.WithTimeout(context.Background(), ctxTimeout*time.Second)
 	defer shutdown()
 
-	server.logger.Println("Server Exited Properly")
-	return server.echo.Server.Shutdown(ctx)
+	log.Println("Server Exited Properly")
+	return s.echo.Server.Shutdown(ctx)
 }

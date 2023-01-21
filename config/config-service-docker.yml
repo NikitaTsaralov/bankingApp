@@ -1,10 +1,5 @@
-server:
-  AppVersion: 1.0.0
-  Port: :5000
-  Queue: task_queue
-  
 postgres:
-  PostgresqlHost: localhost
+  PostgresqlHost: postgesql
   PostgresqlPort: 5432
   PostgresqlUser: postgres
   PostgresqlPassword: postgres
@@ -13,9 +8,8 @@ postgres:
   PgDriver: pgx
 
 rabbit:
-  RabbitHost: localhost
+  RabbitHost: rabbitmq
   RabbitPort: 5672
   RabbitUser: guest
   RabbitPassword: guest
   Queue: task_queue
-  
