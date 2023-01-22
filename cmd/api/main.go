@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/NikitaTsaralov/bankingApp/config"
 	"github.com/NikitaTsaralov/bankingApp/internal/server"
@@ -17,8 +18,8 @@ func main() {
 
 	// load and parse config file
 	// TODO: this
-	// configPath := utils.GetConfigPath(os.Getenv("config"))
-	configPath := utils.GetConfigPath("config", "local")
+	configPath := utils.GetConfigPath("config", os.Getenv("config"))
+	// configPath := utils.GetConfigPath("config", "local")
 	cfgFile, err := config.LoadConfig(configPath)
 	if err != nil {
 		log.Fatalf("LoadConfig cfgPath: %s failed: %v", configPath, err)

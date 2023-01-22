@@ -2,31 +2,23 @@ version: "3.3"
 
 services:
 
+  migrate:
+    container_name: migration
+    build:
+      context: ./
+      dockerfile: docker/migrate.Dockerfile
+    depends_on:
+      - postgesql
+      - rabbitmq
+    command: ./main
+    networks:
+      - bank_app
+
   web: 
     container_name: api
     build:
       context: ./
-      dockerfile: docker/Dockerfile
-    ports:
-      - "5000:5000"
-    environment:
-      - PORT=5000
-    depends_on:
-      - postgesql
-      - rabbitmq
-    restart: always
-    tty: true
-    # command: /bank_app
-    volumes:
-      - ./:/app
-    networks:
-      - bank_app
-  
-  service: 
-    container_name: service
-    build:
-      context: ./
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/api.Dockerfile
     ports:
       - "5000:5000"
     environment:
@@ -36,11 +28,30 @@ services:
       - rabbitmq
     restart: always
     # tty: true
-    command: /bank_app
-    volumes:
-      - ./:/app
+    command: ./main
+    # volumes:
+    #   - ./:/app
     networks:
       - bank_app
+  
+  service: 
+    container_name: service
+    build:
+      context: ./
+      dockerfile: docker/service.Dockerfile
+    environment:
+      - PORT=5000
+    depends_on:
+      - postgesql
+      - rabbitmq
+    restart: always
+    # tty: true
+    command: ./main
+    # volumes:
+    #   - ./:/app
+    networks:
+      - bank_app
+
   postgesql:
     image: postgres:12-alpine
     container_name: postgesql

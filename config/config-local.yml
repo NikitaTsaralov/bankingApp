@@ -12,11 +12,11 @@ logger:
   Development: true
   DisableCaller: false
   DisableStacktrace: false
-  Encoding: json
+  Encoding: console
   Level: info
 
 postgres:
-  PostgresqlHost: localhost
+  PostgresqlHost: postgesql
   PostgresqlPort: 5432
   PostgresqlUser: postgres
   PostgresqlPassword: postgres
@@ -25,7 +25,7 @@ postgres:
   PgDriver: pgx
 
 rabbit:
-  RabbitHost: localhost
+  RabbitHost: rabbitmq
   RabbitPort: 5672
   RabbitUser: guest
   RabbitPassword: guest
