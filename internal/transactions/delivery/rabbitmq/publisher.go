@@ -55,7 +55,7 @@ func (publisher *TransactionPublisher) Publish(transaction *models.ResponseTrans
 		publisher.cfg.Server.QueueIn,
 		true,
 		false,
-		true,
+		false,
 		false,
 		nil,
 	)
