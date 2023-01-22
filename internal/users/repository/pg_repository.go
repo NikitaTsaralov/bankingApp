@@ -106,6 +106,7 @@ func (users *userRepo) GetAccountByUserId(userId uint) (*models.ResponseAccount,
 		ID:      gormAccount.ID,
 		Name:    gormAccount.Name,
 		Balance: gormAccount.Balance,
+		UserID:  gormAccount.UserID,
 	}, nil
 }
 

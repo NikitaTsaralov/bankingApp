@@ -46,9 +46,6 @@ func (s *Server) Run() error {
 		MaxHeaderBytes: maxHeaderBytes,
 	}
 
-	s.echo.POST("/putMoney", s.putMoney)
-	s.echo.POST("/getMoney", s.getMoney)
-
 	go func() {
 		log.Printf("Server is listening on PORT: %s", s.cfg.Server.Port)
 		if err := s.echo.StartServer(server); err != nil {

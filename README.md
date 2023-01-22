@@ -19,6 +19,7 @@
 ## Referenced projects:
 
 * https://github.com/AleksK1NG/Go-Clean-Architecture-REST-API
+* https://github.com/AleksK1NG/Go-gRPC-RabbitMQ-microservice
 * https://github.com/antsla/saga
 * https://github.com/Duomly/go-bank-backend
 * https://github.com/isayme/go-amqp-reconnect/blob/master/rabbitmq/rabbitmq.go
@@ -36,14 +37,11 @@
 
 1. Fix log volume in rabbit
 2. Tests from config files
-3. Transaction types in config
 4. Fix tests (test depend on each other)
 5. fix logging + Logger to zap
-6. Migration create sql script
 
 # TODOs must
 
-1. foreign keys
 2. migration in dockerfile
 
 # Testing manual helpers:
@@ -51,11 +49,4 @@
 ```
 pip install pgcli
 pgcli -h 127.0.0.1 -p 5432 -U postgres -W postgres -d auth_db
-```
-
-# Setup
-
-1. Drop tables
-```
-psql -h localhost -d auth_db -U postgres -p 5432 -a -q -f migrations/01_create_initial_tables.down.sql 
 ```

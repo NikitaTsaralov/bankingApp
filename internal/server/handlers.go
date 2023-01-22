@@ -19,7 +19,7 @@ func (s *Server) MapHandlers(e *echo.Echo) error {
 
 	// register usecases
 	userUseCase := userUseCase.Init(s.cfg, uRepo, s.logger)
-	transactionUseCase := transactionUseCase.Init(s.cfg, tRepo, s.logger)
+	transactionUseCase := transactionUseCase.Init(s.cfg, tRepo, uRepo, s.broker, s.logger)
 
 	// register handlers
 	userHandlers := userHttp.Init(s.cfg, userUseCase, s.logger)

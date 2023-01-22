@@ -16,7 +16,13 @@ func (mw *MiddlewareManager) validateJWTToken(tokenString string, c echo.Context
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, httpErrors.InvalidJWTToken)
 	}
-	c.Set("user", userId)
+
+	user, err := mw.authUC.GetUserById(userId)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, httpErrors.InvalidJWTToken)
+	}
+
+	c.Set("user", user.ID)
 	return nil
 }
 

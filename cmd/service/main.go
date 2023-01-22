@@ -7,7 +7,7 @@ import (
 	"github.com/NikitaTsaralov/bankingApp/config"
 	"github.com/NikitaTsaralov/bankingApp/pkg/db"
 	"github.com/NikitaTsaralov/bankingApp/pkg/utils"
-	"github.com/NikitaTsaralov/bankingApp/service/worker"
+	"github.com/NikitaTsaralov/bankingApp/service"
 	// amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -30,7 +30,7 @@ func main() {
 		log.Fatalf("DB Init failed: %v", err)
 	}
 
-	dumper := worker.Init(cfg, database, &log.Logger{})
+	dumper := service.Init(cfg, database, &log.Logger{})
 
 	err = dumper.Run()
 	if err != nil {

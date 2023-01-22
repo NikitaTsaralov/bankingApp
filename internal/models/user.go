@@ -32,11 +32,11 @@ func (user *ResponseUser) Validate() error {
 	validate := validator.New()
 	err := validate.Struct(user)
 	if err != nil {
-		return fmt.Errorf("Validation error: %v", err)
+		return fmt.Errorf("validation error: %v", err)
 	}
 
 	if len(user.Password) < 8 {
-		return fmt.Errorf("Validation error: password too short")
+		return fmt.Errorf("validation error: password too short")
 	}
 	return nil
 }
