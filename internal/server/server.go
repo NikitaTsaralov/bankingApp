@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/NikitaTsaralov/bankingApp/config"
-	"github.com/NikitaTsaralov/bankingApp/pkg/rabbitmq"
+	"github.com/NikitaTsaralov/bankingApp/pkg/rabbitmq/reconnect"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 )
@@ -21,20 +21,20 @@ const (
 )
 
 type Server struct {
-	echo   *echo.Echo
-	cfg    *config.Config
-	broker *rabbitmq.RabbitMQClient
-	db     *gorm.DB // or it will be inside service
-	logger *log.Logger
+	echo             *echo.Echo
+	cfg              *config.Config
+	rabbitConnection *reconnect.Connection
+	db               *gorm.DB // or it will be inside service
+	logger           *log.Logger
 }
 
-func Init(cfg *config.Config, db *gorm.DB, broker *rabbitmq.RabbitMQClient, logger *log.Logger) *Server {
+func Init(cfg *config.Config, db *gorm.DB, rabbitConnection *reconnect.Connection, logger *log.Logger) *Server {
 	return &Server{
-		echo:   echo.New(),
-		cfg:    cfg,
-		db:     db,
-		broker: broker,
-		logger: logger,
+		echo:             echo.New(),
+		cfg:              cfg,
+		db:               db,
+		rabbitConnection: rabbitConnection,
+		logger:           logger,
 	}
 }
 

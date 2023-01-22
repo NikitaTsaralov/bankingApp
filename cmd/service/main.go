@@ -7,14 +7,18 @@ import (
 	"github.com/NikitaTsaralov/bankingApp/config"
 	"github.com/NikitaTsaralov/bankingApp/pkg/db"
 	"github.com/NikitaTsaralov/bankingApp/pkg/utils"
-	"github.com/NikitaTsaralov/bankingApp/service"
+
+	"github.com/NikitaTsaralov/bankingApp/internal/transactions/delivery/rabbitmq"
+	transactionRepo "github.com/NikitaTsaralov/bankingApp/internal/transactions/repository"
+	transactionUseCase "github.com/NikitaTsaralov/bankingApp/internal/transactions/usecase"
+	userRepo "github.com/NikitaTsaralov/bankingApp/internal/users/repository"
 	// amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func main() {
 	fmt.Println("Starting service")
 
-	configPath := utils.GetConfigPath("config-service", "local")
+	configPath := utils.GetConfigPath("config", "local")
 	cfgFile, err := config.LoadConfig(configPath)
 	if err != nil {
 		log.Fatalf("LoadConfig cfgPath: %s failed: %v", configPath, err)
@@ -30,9 +34,20 @@ func main() {
 		log.Fatalf("DB Init failed: %v", err)
 	}
 
-	dumper := service.Init(cfg, database, &log.Logger{})
+	logger := &log.Logger{}
+	uRepo := userRepo.Init(database)
+	tRepo := transactionRepo.Init(database)
+	publisher, err := rabbitmq.InitTransactionPublisher(cfg, logger)
+	if err != nil {
+		log.Fatalf("InitTransactionPublisher failed: %v", err)
+	}
+	transactionUseCase := transactionUseCase.Init(cfg, tRepo, uRepo, publisher, logger)
+	consumer, err := rabbitmq.InitTransactionConsumer(cfg, transactionUseCase, logger)
+	if err != nil {
+		log.Fatalf("InitTransactionConsumer failed: %v", err)
+	}
 
-	err = dumper.Run()
+	err = consumer.StartConsumer()
 	if err != nil {
 		log.Fatalf("Worker run failed: %v", err)
 	}

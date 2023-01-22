@@ -7,19 +7,26 @@ import (
 	userUseCase "github.com/NikitaTsaralov/bankingApp/internal/users/usecase"
 
 	transactionHttp "github.com/NikitaTsaralov/bankingApp/internal/transactions/delivery/http"
+	"github.com/NikitaTsaralov/bankingApp/internal/transactions/delivery/rabbitmq"
 	transactionRepo "github.com/NikitaTsaralov/bankingApp/internal/transactions/repository"
 	transactionUseCase "github.com/NikitaTsaralov/bankingApp/internal/transactions/usecase"
 	"github.com/labstack/echo/v4"
 )
 
 func (s *Server) MapHandlers(e *echo.Echo) error {
+	publisher, err := rabbitmq.InitTransactionPublisher(s.cfg, s.logger)
+	if err != nil {
+		return err
+	}
+	// defer publisher.Close()
+
 	// register repos
 	uRepo := userRepo.Init(s.db)
 	tRepo := transactionRepo.Init(s.db)
 
 	// register usecases
 	userUseCase := userUseCase.Init(s.cfg, uRepo, s.logger)
-	transactionUseCase := transactionUseCase.Init(s.cfg, tRepo, uRepo, s.broker, s.logger)
+	transactionUseCase := transactionUseCase.Init(s.cfg, tRepo, uRepo, publisher, s.logger)
 
 	// register handlers
 	userHandlers := userHttp.Init(s.cfg, userUseCase, s.logger)

@@ -39,6 +39,7 @@
 2. Tests from config files
 4. Fix tests (test depend on each other)
 5. fix logging + Logger to zap
+6. CLose connections
 
 # TODOs must
 

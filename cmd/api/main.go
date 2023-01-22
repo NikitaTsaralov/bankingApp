@@ -33,7 +33,10 @@ func main() {
 		log.Fatalf("DB Init failed: %v", err)
 	}
 
-	broker := rabbitmq.Init(cfg, &log.Logger{})
+	broker, err := rabbitmq.Init(cfg)
+	if err != nil {
+		log.Fatalf("RabbitMQ Init failed: %v", err)
+	}
 
 	s := server.Init(cfg, database, broker, &log.Logger{})
 	if err = s.Run(); err != nil {

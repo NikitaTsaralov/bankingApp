@@ -43,7 +43,7 @@ func (transactions *transactionHandlers) PutMoney() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, err.Error())
 		}
 
-		transactionResp, err := transactions.transactionsUC.MoneyOperation(res.(uint), &transaction)
+		transactionResp, err := transactions.transactionsUC.PublishMoneyOperation(res.(uint), &transaction)
 		if err != nil {
 			return c.String(http.StatusBadRequest, fmt.Sprintf("error transactionsUC.PutMoney: %v", err))
 		}
@@ -70,7 +70,7 @@ func (transactions *transactionHandlers) GetMoney() echo.HandlerFunc {
 		}
 
 		transaction.Amount = -transaction.Amount
-		transactionResp, err := transactions.transactionsUC.MoneyOperation(res.(uint), &transaction)
+		transactionResp, err := transactions.transactionsUC.PublishMoneyOperation(res.(uint), &transaction)
 		if err != nil {
 			return c.String(http.StatusBadRequest, fmt.Sprintf("error transactionsUC.PutMoney: %v", err))
 		}
