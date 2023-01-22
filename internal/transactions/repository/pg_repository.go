@@ -46,6 +46,16 @@ func (transactions *transactionRepo) MoneyOperation(transaction *models.Response
 	}
 
 	gormAccount.Balance += transaction.Amount
+	if gormAccount.Balance <= 0 {
+		tx.Rollback()
+		return &models.ResponseTransaction{
+			ID:        gormTransaction.ID,
+			AccountId: gormAccount.ID,
+			Amount:    gormTransaction.Amount,
+			Status:    "you're out of money, canceled",
+		}, nil
+	}
+
 	if dbc := transactions.db.Save(&gormAccount); dbc.Error != nil {
 		tx.Rollback()
 		return nil, fmt.Errorf("error updating Account: %v", dbc.Error)

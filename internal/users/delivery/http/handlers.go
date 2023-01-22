@@ -85,6 +85,7 @@ func (h *userHandlers) GetMe() echo.HandlerFunc {
 		if err != nil {
 			return c.String(http.StatusInternalServerError, fmt.Sprintf("error get user with id %d: %v", res.(uint), err))
 		}
+
 		return c.JSON(http.StatusOK, user)
 	}
 }

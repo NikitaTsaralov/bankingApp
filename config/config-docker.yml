@@ -1,7 +1,8 @@
 server:
   AppVersion: 1.0.0
   Port: :5000
-  Queue: task_queue
+  QueueOut: task_queue_1
+  OueueIn: task_queue_2
   JwtSecretKey: MyBestSecuredKey
   
 postgres:
@@ -18,5 +19,4 @@ rabbit:
   RabbitPort: 5672
   RabbitUser: guest
   RabbitPassword: guest
-  Queue: task_queue
   

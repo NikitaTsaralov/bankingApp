@@ -18,6 +18,7 @@ type ResponseTransaction struct {
 	ID        uint    `json:"id,omitempty"`
 	AccountId uint    `json:"account_id"`
 	Amount    float64 `json:"amount" validate:"required"`
+	Status    string  `json:"status_msg,omitempty"`
 }
 
 func (transaction *ResponseTransaction) Validate() error {

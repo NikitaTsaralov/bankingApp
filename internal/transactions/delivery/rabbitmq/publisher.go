@@ -1,9 +1,11 @@
 package rabbitmq
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/NikitaTsaralov/bankingApp/config"
 	"github.com/NikitaTsaralov/bankingApp/internal/models"
@@ -50,7 +52,7 @@ func (publisher *TransactionPublisher) Close() {
 
 func (publisher *TransactionPublisher) Publish(transaction *models.ResponseTransaction) (res *models.ResponseTransaction, err error) {
 	queue, err := publisher.rabbitmqChan.QueueDeclare(
-		"",
+		publisher.cfg.Server.QueueIn,
 		true,
 		false,
 		false,
@@ -81,11 +83,14 @@ func (publisher *TransactionPublisher) Publish(transaction *models.ResponseTrans
 		return nil, errors.Wrap(err, "error json.Unmarshal")
 	}
 
-	err = publisher.rabbitmqChan.Publish(
-		"",                         // exchange
-		publisher.cfg.Server.Queue, // routing key
-		false,                      // mandatory
-		false,                      // immediate
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(publisher.cfg.Server.CtxTimeoutBroker)*time.Second)
+	defer cancel()
+
+	err = publisher.rabbitmqChan.PublishWithContext(ctx,
+		"",                            // exchange
+		publisher.cfg.Server.QueueOut, // routing key
+		false,                         // mandatory
+		false,                         // immediate
 		amqp.Publishing{
 			ContentType:   "text/plain",
 			CorrelationId: corrId,

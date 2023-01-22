@@ -34,12 +34,12 @@ func InitTransactionConsumer(cfg *config.Config, transactionsUC transactions.Use
 	}
 
 	_, err = rabbitmqChan.QueueDeclare(
-		cfg.Server.Queue, // name
-		true,             // durable
-		false,            // delete when unused
-		false,            // exclusive
-		false,            // no-wait
-		nil,              // arguments
+		cfg.Server.QueueOut, // name
+		true,                // durable
+		false,               // delete when unused
+		false,               // exclusive
+		false,               // no-wait
+		nil,                 // arguments
 	)
 	if err != nil {
 		return nil, fmt.Errorf("problem rabbitmqChan.QueueDeclare: %v", err)
@@ -63,8 +63,9 @@ func InitTransactionConsumer(cfg *config.Config, transactionsUC transactions.Use
 }
 
 func (c *TransactionConsumer) worker(ch *reconnect.Channel, messages <-chan amqp.Delivery) {
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(c.cfg.Server.CtxTimeoutBroker)*time.Second)
 	defer cancel()
+
 	for d := range messages {
 		var transaction models.ResponseTransaction
 		err := json.Unmarshal(d.Body, &transaction)
@@ -74,13 +75,13 @@ func (c *TransactionConsumer) worker(ch *reconnect.Channel, messages <-chan amqp
 		}
 		log.Printf("Unmarshal message: %s", d.Body)
 
-		_, err = c.transactionsUC.MoneyOperation(&transaction)
+		gormTransaction, err := c.transactionsUC.MoneyOperation(&transaction)
 		if err != nil {
 			log.Printf("creating transaction error: %v", err)
 			d.Nack(false, false)
 		}
 
-		jsonBytes, err := json.Marshal(transaction)
+		jsonBytes, err := json.Marshal(gormTransaction)
 		if err != nil {
 			log.Printf("json.Marshal error: %v", err)
 			d.Nack(false, false)
@@ -107,13 +108,13 @@ func (c *TransactionConsumer) worker(ch *reconnect.Channel, messages <-chan amqp
 
 func (c *TransactionConsumer) StartConsumer() error {
 	msgs, err := c.rabbitmqChan.Consume(
-		c.cfg.Server.Queue, // queue
-		"",                 // consumer
-		false,              // auto-ack
-		false,              // exclusive
-		false,              // no-local
-		false,              // no-wait
-		nil,                // args
+		c.cfg.Server.QueueOut, // queue
+		"",                    // consumer
+		false,                 // auto-ack
+		false,                 // exclusive
+		false,                 // no-local
+		false,                 // no-wait
+		nil,                   // args
 	)
 	if err != nil {
 		return errors.Wrap(err, "Consume")

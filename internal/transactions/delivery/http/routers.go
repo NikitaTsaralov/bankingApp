@@ -9,5 +9,6 @@ import (
 func MapTransactionRoutes(usersGroup *echo.Group, h transactions.Handlers, mw *middleware.MiddlewareManager) {
 	usersGroup.Use(mw.AuthJWTMiddleware())
 	usersGroup.POST("/get_money", h.GetMoney())
+	usersGroup.Use(mw.AuthJWTMiddleware())
 	usersGroup.POST("/put_money", h.PutMoney())
 }

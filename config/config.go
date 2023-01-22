@@ -20,12 +20,14 @@ type ServiceConfig struct {
 }
 
 type ServerConfig struct {
-	AppVersion   string
-	Port         string
-	Queue        string
-	JwtSecretKey string
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
+	AppVersion       string
+	Port             string
+	QueueOut         string
+	QueueIn          string
+	JwtSecretKey     string
+	CtxTimeoutBroker int
+	ReadTimeout      time.Duration
+	WriteTimeout     time.Duration
 }
 
 type PostgresConfig struct {
