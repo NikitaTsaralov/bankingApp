@@ -7,6 +7,7 @@ import (
 	"github.com/NikitaTsaralov/bankingApp/config"
 	"github.com/NikitaTsaralov/bankingApp/internal/server"
 	"github.com/NikitaTsaralov/bankingApp/pkg/db"
+	"github.com/NikitaTsaralov/bankingApp/pkg/logger"
 	"github.com/NikitaTsaralov/bankingApp/pkg/rabbitmq"
 	"github.com/NikitaTsaralov/bankingApp/pkg/utils"
 )
@@ -27,6 +28,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("ParseConfig failed: %v", err)
 	}
+
+	appLogger := logger.NewApiLogger(cfg)
+	appLogger.InitLogger()
+	appLogger.Infof("AppVersion: %s, LogLevel: %s, Mode: %s", cfg.Server.AppVersion, cfg.Logger.Level, cfg.Server.Mode)
 
 	database, err := db.Init(cfg)
 	if err != nil {

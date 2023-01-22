@@ -12,11 +12,7 @@ type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
 	Rabbit   RabbitConfig
-}
-
-type ServiceConfig struct {
-	Postgres PostgresConfig
-	Rabbit   RabbitConfig
+	Logger   Logger
 }
 
 type ServerConfig struct {
@@ -25,9 +21,18 @@ type ServerConfig struct {
 	QueueOut         string
 	QueueIn          string
 	JwtSecretKey     string
+	Mode             string
 	CtxTimeoutBroker int
 	ReadTimeout      time.Duration
 	WriteTimeout     time.Duration
+}
+
+type Logger struct {
+	Development       bool
+	DisableCaller     bool
+	DisableStacktrace bool
+	Encoding          string
+	Level             string
 }
 
 type PostgresConfig struct {

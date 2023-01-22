@@ -3,8 +3,17 @@ server:
   Port: :5000
   QueueOut: task_queue_1
   OueueIn: task_queue_2
+  Mode: Development
+  CtxTimeoutBroker: 10
   JwtSecretKey: MyBestSecuredKey
-  
+
+logger:
+  Development: true
+  DisableCaller: false
+  DisableStacktrace: false
+  Encoding: console
+  Level: info
+
 postgres:
   PostgresqlHost: postgesql
   PostgresqlPort: 5432

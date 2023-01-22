@@ -114,7 +114,7 @@ func (users *userRepo) GetTransactionsByUserId(userId uint) ([]models.ResponseTr
 	gormTransaction := &models.Transaction{}
 	gormTransactions := []models.Transaction{}
 
-	users.db.Model(gormTransaction).Select("*").Joins("left join accounts on accounts.id = transactions.account_id").Joins("left join users on accounts.user_id = users.id").Scan(&gormTransactions)
+	users.db.Model(gormTransaction).Select("*").Joins("left join accounts on accounts.id = transactions.account_id").Joins("left join users on accounts.user_id = users.id").Where("accounts.user_id = ? ", userId).Scan(&gormTransactions)
 	fmt.Println(gormTransactions)
 
 	transactions := []models.ResponseTransaction{}
