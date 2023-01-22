@@ -49,15 +49,16 @@ func (s *Server) Run() error {
 	s.echo.POST("/putMoney", s.putMoney)
 	s.echo.POST("/getMoney", s.getMoney)
 
-	s.echo.POST("/login", s.Login)
-	s.echo.PUT("/register", s.Register)
-
 	go func() {
 		log.Printf("Server is listening on PORT: %s", s.cfg.Server.Port)
 		if err := s.echo.StartServer(server); err != nil {
 			log.Fatal("Error starting Server: ", err)
 		}
 	}()
+
+	if err := s.MapHandlers(s.echo); err != nil {
+		return err
+	}
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)

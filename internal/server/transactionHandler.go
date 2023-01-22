@@ -13,7 +13,7 @@ import (
 
 func (s *Server) putMoney(c echo.Context) error {
 	auth := c.Request().Header.Get("Authorization")
-	userId, err := token.ValidateToken(auth)
+	userId, err := token.ValidateToken(auth, s.cfg)
 	if err != nil {
 		return c.String(http.StatusBadRequest, fmt.Sprintf("JWT Validation error: %v", err))
 	}
@@ -55,7 +55,7 @@ func (s *Server) putMoney(c echo.Context) error {
 
 func (s *Server) getMoney(c echo.Context) error {
 	auth := c.Request().Header.Get("Authorization")
-	userId, err := token.ValidateToken(auth)
+	userId, err := token.ValidateToken(auth, s.cfg)
 	if err != nil {
 		return c.String(http.StatusBadRequest, fmt.Sprintf("JWT Validation error: %v", err))
 	}

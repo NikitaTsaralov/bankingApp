@@ -15,6 +15,11 @@ type User struct {
 	Password string `gorm:"not null"`
 }
 
+type UserWithToken struct {
+	User  *ResponseUser `json:"user"`
+	Token string        `json:"token"`
+}
+
 type ResponseUser struct {
 	ID       uint            `json:"id,omitempty"`
 	Username string          `json:"username" validate:"required"`

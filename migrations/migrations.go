@@ -30,6 +30,17 @@ func (migration *Migration) Migrate() error {
 	accounts := &models.Account{}
 	transactions := &models.Transaction{}
 
+	// drop tables
+	if dbc := migration.database.DropTableIfExists(&users); dbc.Error != nil {
+		return fmt.Errorf("gorm.DB.DropTable failed: %v", dbc.Error)
+	}
+	if dbc := migration.database.DropTableIfExists(&accounts); dbc.Error != nil {
+		return fmt.Errorf("gorm.DB.DropTable failed: %v", dbc.Error)
+	}
+	if dbc := migration.database.DropTableIfExists(&transactions); dbc.Error != nil {
+		return fmt.Errorf("gorm.DB.DropTable failed: %v", dbc.Error)
+	}
+
 	// create tables
 	if dbc := migration.database.AutoMigrate(&users, &accounts, &transactions); dbc.Error != nil {
 		return fmt.Errorf("gorm.DB.AutoMigrate failed: %v", dbc.Error)

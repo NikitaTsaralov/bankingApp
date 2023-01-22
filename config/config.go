@@ -23,6 +23,7 @@ type ServerConfig struct {
 	AppVersion   string
 	Port         string
 	Queue        string
+	JwtSecretKey string
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
 }

@@ -2,6 +2,7 @@ server:
   AppVersion: 1.0.0
   Port: :5000
   Queue: task_queue
+  JwtSecretKey: MyBestSecuredKey
   
 postgres:
   PostgresqlHost: localhost
