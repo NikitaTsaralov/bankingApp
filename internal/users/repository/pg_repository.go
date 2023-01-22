@@ -74,11 +74,22 @@ func (users *userRepo) GetUserByName(username string) (*models.ResponseUser, err
 		return nil, fmt.Errorf("user not found, try /register or check credentials")
 	}
 
+	gormAccount := &models.Account{}
+	if users.db.Table("accounts").Select("*").Where("accounts.user_id = ? ", gormUser.ID).First(&gormAccount).RecordNotFound() {
+		return nil, fmt.Errorf("account not found, contact DB administrator")
+	}
+
 	return &models.ResponseUser{
 		ID:       gormUser.ID,
 		Username: gormUser.Username,
 		Email:    gormUser.Email,
 		Password: gormUser.Password,
+		Account: models.ResponseAccount{
+			ID:      gormAccount.ID,
+			Name:    gormAccount.Name,
+			Balance: gormAccount.Balance,
+			UserID:  gormAccount.UserID,
+		},
 	}, nil
 }
 
@@ -88,11 +99,22 @@ func (users *userRepo) GetUserById(userId uint) (*models.ResponseUser, error) {
 		return nil, fmt.Errorf("user not found, try /register or check credentials")
 	}
 
+	gormAccount := &models.Account{}
+	if users.db.Table("accounts").Select("*").Where("accounts.user_id = ? ", userId).First(&gormAccount).RecordNotFound() {
+		return nil, fmt.Errorf("account not found, contact DB administrator")
+	}
+
 	return &models.ResponseUser{
 		ID:       gormUser.ID,
 		Username: gormUser.Username,
 		Email:    gormUser.Email,
 		Password: gormUser.Password,
+		Account: models.ResponseAccount{
+			ID:      gormAccount.ID,
+			Name:    gormAccount.Name,
+			Balance: gormAccount.Balance,
+			UserID:  gormAccount.UserID,
+		},
 	}, nil
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/NikitaTsaralov/bankingApp/config"
 	"github.com/NikitaTsaralov/bankingApp/internal/models"
 	"github.com/NikitaTsaralov/bankingApp/internal/users"
+	"github.com/NikitaTsaralov/bankingApp/pkg/httpErrors"
 	"github.com/labstack/echo/v4"
 )
 
@@ -31,21 +32,21 @@ func (h *userHandlers) Register() echo.HandlerFunc {
 		var user models.ResponseUser
 		err := json.NewDecoder(c.Request().Body).Decode(&user)
 		if err != nil {
-			return c.String(http.StatusBadRequest, fmt.Sprintf("parse JSON error: %v", err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("parse JSON error: %v", err), err))
 		}
 
 		if err := user.Validate(); err != nil {
-			return c.String(http.StatusBadRequest, err.Error())
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, err.Error(), err))
 		}
 
 		err = user.HashPassword()
 		if err != nil {
-			return c.String(http.StatusBadRequest, fmt.Sprintf("error hashing password: %v", err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("error hashing password: %v", err), err))
 		}
 
 		userWithToken, err := h.userUC.Register(&user)
 		if err != nil {
-			return c.String(http.StatusInternalServerError, fmt.Sprintf("error register: %v", err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("error register: %v", err), err))
 		}
 
 		return c.JSON(http.StatusOK, userWithToken)
@@ -57,16 +58,16 @@ func (h *userHandlers) Login() echo.HandlerFunc {
 		var user models.ResponseUser
 		err := json.NewDecoder(c.Request().Body).Decode(&user)
 		if err != nil {
-			return c.String(http.StatusBadRequest, fmt.Sprintf("parse JSON error: %v", err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("parse JSON error: %v", err), err))
 		}
 
 		if err := user.Validate(); err != nil {
-			return c.String(http.StatusBadRequest, err.Error())
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, err.Error(), err))
 		}
 
 		userWithToken, err := h.userUC.Login(&user)
 		if err != nil {
-			return c.String(http.StatusInternalServerError, fmt.Sprintf("error login: %v", err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("error login: %v", err), err))
 		}
 
 		return c.JSON(http.StatusOK, userWithToken)
@@ -78,12 +79,12 @@ func (h *userHandlers) GetMe() echo.HandlerFunc {
 		res := c.Get("user")
 
 		if _, exists := res.(uint); !exists {
-			return c.String(http.StatusInternalServerError, "wrong JWT token: `user` not in token")
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, "wrong JWT token: `user` not in token", nil))
 		}
 
 		user, err := h.userUC.GetUserById(res.(uint))
 		if err != nil {
-			return c.String(http.StatusInternalServerError, fmt.Sprintf("error get user with id %d: %v", res.(uint), err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("error get user with id %d: %v", res.(uint), err), err))
 		}
 
 		return c.JSON(http.StatusOK, user)
@@ -95,12 +96,12 @@ func (h *userHandlers) GetMyAccount() echo.HandlerFunc {
 		res := c.Get("user")
 
 		if _, exists := res.(uint); !exists {
-			return c.String(http.StatusInternalServerError, "wrong JWT token: `user` not in token")
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, "wrong JWT token: `user` not in token", nil))
 		}
 
 		account, err := h.userUC.GetAccountByUserId(res.(uint))
 		if err != nil {
-			return c.String(http.StatusInternalServerError, fmt.Sprintf("error get account for user with id %d: %v", res.(uint), err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("error getting account with user_id %d: %v", res.(uint), err), err))
 		}
 
 		return c.JSON(http.StatusOK, account)
@@ -112,12 +113,12 @@ func (h *userHandlers) History() echo.HandlerFunc {
 		res := c.Get("user")
 
 		if _, exists := res.(uint); !exists {
-			return c.String(http.StatusInternalServerError, "wrong JWT token: `user` not in token")
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, "wrong JWT token: `user` not in token", nil))
 		}
 
 		transactions, err := h.userUC.GetTransactionsByUserId(res.(uint))
 		if err != nil {
-			return c.String(http.StatusInternalServerError, fmt.Sprintf("error get transactions for user with id %d: %v", res.(uint), err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("error getting transactions with user_id %d: %v", res.(uint), err), err))
 		}
 
 		return c.JSON(http.StatusOK, transactions)

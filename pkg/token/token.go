@@ -15,7 +15,7 @@ func PrepareToken(user *models.ResponseUser, cfg *config.Config) (token string, 
 	tokenContent := jwt.MapClaims{
 		"user_id":    strconv.Itoa(int(user.ID)),
 		"account_id": strconv.Itoa(int(user.Account.ID)),
-		"expiry":     time.Now().Add(time.Minute * 60).Unix(),
+		"expiry":     time.Now().Add(time.Minute * time.Duration(cfg.Server.JwtExpire)).Unix(),
 	}
 	jwtToken := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tokenContent)
 	token, err = jwtToken.SignedString([]byte(cfg.Server.JwtSecretKey))

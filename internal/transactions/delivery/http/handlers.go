@@ -9,6 +9,7 @@ import (
 	"github.com/NikitaTsaralov/bankingApp/config"
 	"github.com/NikitaTsaralov/bankingApp/internal/models"
 	"github.com/NikitaTsaralov/bankingApp/internal/transactions"
+	"github.com/NikitaTsaralov/bankingApp/pkg/httpErrors"
 	"github.com/labstack/echo/v4"
 )
 
@@ -30,22 +31,22 @@ func (transactions *transactionHandlers) PutMoney() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		res := c.Get("user")
 		if _, exists := res.(uint); !exists {
-			return c.String(http.StatusInternalServerError, "wrong JWT token: `user` not in token")
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, "wrong JWT token: `user` not in token", nil))
 		}
 
 		var transaction models.ResponseTransaction
 		err := json.NewDecoder(c.Request().Body).Decode(&transaction)
 		if err != nil {
-			return c.String(http.StatusBadRequest, fmt.Sprintf("parse JSON error: %v", err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("parse JSON error: %v", err), err))
 		}
 
 		if err := transaction.Validate(); err != nil {
-			return c.String(http.StatusBadRequest, err.Error())
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, err.Error(), err))
 		}
 
 		transactionResp, err := transactions.transactionsUC.PublishMoneyOperation(res.(uint), &transaction)
 		if err != nil {
-			return c.String(http.StatusBadRequest, fmt.Sprintf("error transactionsUC.PutMoney: %v", err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("error transactionsUC.PutMoney: %v", err), err))
 		}
 
 		return c.JSON(http.StatusOK, transactionResp)
@@ -56,23 +57,23 @@ func (transactions *transactionHandlers) GetMoney() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		res := c.Get("user")
 		if _, exists := res.(uint); !exists {
-			return c.String(http.StatusInternalServerError, "wrong JWT token: `user` not in token")
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, "wrong JWT token: `user` not in token", nil))
 		}
 
 		var transaction models.ResponseTransaction
 		err := json.NewDecoder(c.Request().Body).Decode(&transaction)
 		if err != nil {
-			return c.String(http.StatusBadRequest, fmt.Sprintf("parse JSON error: %v", err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("parse JSON error: %v", err), err))
 		}
 
 		if err := transaction.Validate(); err != nil {
-			return c.String(http.StatusBadRequest, err.Error())
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, err.Error(), err))
 		}
 
 		transaction.Amount = -transaction.Amount
 		transactionResp, err := transactions.transactionsUC.PublishMoneyOperation(res.(uint), &transaction)
 		if err != nil {
-			return c.String(http.StatusBadRequest, fmt.Sprintf("error transactionsUC.PutMoney: %v", err))
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("error transactionsUC.PutMoney: %v", err), err))
 		}
 
 		return c.JSON(http.StatusOK, transactionResp)

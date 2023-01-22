@@ -14,6 +14,7 @@ type Migration struct {
 }
 
 func Init(config *config.Config) (migration *Migration, err error) {
+	migration = &Migration{}
 	migration.database, err = db.Init(config)
 	if err != nil {
 		return nil, fmt.Errorf("error init PsqlDB: %v", err)

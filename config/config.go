@@ -21,6 +21,7 @@ type ServerConfig struct {
 	QueueOut         string
 	QueueIn          string
 	JwtSecretKey     string
+	JwtExpire        int
 	Mode             string
 	CtxTimeoutBroker int
 	ReadTimeout      time.Duration

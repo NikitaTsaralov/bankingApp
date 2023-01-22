@@ -2,10 +2,11 @@ server:
   AppVersion: 1.0.0
   Port: :5000
   QueueOut: task_queue_1
-  OueueIn: task_queue_2
+  QueueIn: task_queue_2
   Mode: Development
   CtxTimeoutBroker: 10
   JwtSecretKey: MyBestSecuredKey
+  JwtExpire: 10
 
 logger:
   Development: true
