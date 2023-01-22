@@ -21,6 +21,10 @@ type ResponseTransaction struct {
 	Status    string  `json:"status_msg,omitempty"`
 }
 
+type RequestTransaction struct {
+	ID uint `json:"id" validate:"required"`
+}
+
 func (transaction *ResponseTransaction) Validate() error {
 	validate := validator.New()
 	err := validate.Struct(transaction)
@@ -30,6 +34,16 @@ func (transaction *ResponseTransaction) Validate() error {
 
 	if transaction.Amount <= 0 {
 		return fmt.Errorf("validation error: you cannot put %v money", transaction.Amount)
+	}
+
+	return nil
+}
+
+func (transaction *RequestTransaction) Validate() error {
+	validate := validator.New()
+	err := validate.Struct(transaction)
+	if err != nil {
+		return fmt.Errorf("validation error: %v", err)
 	}
 
 	return nil

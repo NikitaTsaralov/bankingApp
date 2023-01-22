@@ -86,3 +86,11 @@ func (uc *userUC) GetTransactionsByUserId(userId uint) ([]models.ResponseTransac
 	}
 	return repoTransactions, nil
 }
+
+func (uc *userUC) GetTransaction(id uint, userId uint) (*models.ResponseTransaction, error) {
+	repoTransaction, err := uc.userRepo.GetTransaction(id, userId)
+	if err != nil {
+		return nil, fmt.Errorf("error userRepo.GetTransactionsByUserId: %v", err)
+	}
+	return repoTransaction, nil
+}

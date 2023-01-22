@@ -16,14 +16,6 @@
 
 > Ваше решение будет оцениваться по критериям понятности и поддерживаемости - гипотетические члены вашей команды не должны тратить лишнее время на расшифровку вашего замысла, исследуя вашу архитектуру или читая ваш код.
 
-## Referenced projects:
-
-* https://github.com/AleksK1NG/Go-Clean-Architecture-REST-API
-* https://github.com/AleksK1NG/Go-gRPC-RabbitMQ-microservice
-* https://github.com/antsla/saga
-* https://github.com/Duomly/go-bank-backend
-* https://github.com/isayme/go-amqp-reconnect/blob/master/rabbitmq/rabbitmq.go
-
 ### Обязательно:
 * Необходимо использовать postgresql в качестве бд.
 * Если у вас будет несколько сервисов, которые общаются друг с другом, они _должны_ общаться по grpc.
@@ -33,19 +25,28 @@
 * Плюсом будет openapi описание вашего публичного api.
 * Также плюсом будет простой compose-файл для всей инфры
 
-# TODOs if time (small fixes):
+## Образец
 
-1. Fix log volume in rabbit
-2. Tests from config files
-4. Fix tests (test depend on each other)
-5. fix logging + Logger to zap
-6. CLose connections
+В качестве абстракции использовалась идея с банковской картой. Операции пользователя:
 
-# TODOs must
+* авторизация с JWT
+* просмотр личной информации
+* просмотр информации карты (аккаунта)
+* просмотр истории переводов
+* пополнение
+* снятие наличных
 
-2. migration in dockerfile
+> Коллекция postman запросов доступна в [файле](./API.postman_collection.json)
 
-# Testing manual helpers:
+## Референсы:
+
+* https://github.com/AleksK1NG/Go-Clean-Architecture-REST-API
+* https://github.com/AleksK1NG/Go-gRPC-RabbitMQ-microservice
+* https://github.com/antsla/saga
+* https://github.com/Duomly/go-bank-backend
+* https://github.com/isayme/go-amqp-reconnect/blob/master/rabbitmq/rabbitmq.go
+
+#### Testing manual helpers:
 
 ```
 pip install pgcli

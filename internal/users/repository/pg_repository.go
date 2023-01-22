@@ -137,7 +137,6 @@ func (users *userRepo) GetTransactionsByUserId(userId uint) ([]models.ResponseTr
 	gormTransactions := []models.Transaction{}
 
 	users.db.Model(gormTransaction).Select("*").Joins("left join accounts on accounts.id = transactions.account_id").Joins("left join users on accounts.user_id = users.id").Where("accounts.user_id = ? ", userId).Scan(&gormTransactions)
-	fmt.Println(gormTransactions)
 
 	transactions := []models.ResponseTransaction{}
 	for _, transaction := range gormTransactions {
@@ -148,4 +147,22 @@ func (users *userRepo) GetTransactionsByUserId(userId uint) ([]models.ResponseTr
 		})
 	}
 	return transactions, nil
+}
+
+func (users *userRepo) GetTransaction(id uint, userId uint) (*models.ResponseTransaction, error) {
+	gormTransaction := &models.Transaction{}
+
+	if users.db.Model(gormTransaction).Select("*").
+		Joins("left join accounts on accounts.id = transactions.account_id").
+		Joins("left join users on accounts.user_id = users.id").
+		Where("accounts.user_id = ? ", userId).Where("transactions.id = ? ", id).
+		Scan(&gormTransaction).RecordNotFound() {
+		return nil, fmt.Errorf("not found")
+	}
+
+	return &models.ResponseTransaction{
+		ID:        gormTransaction.ID,
+		AccountId: gormTransaction.AccountId,
+		Amount:    gormTransaction.Amount,
+	}, nil
 }

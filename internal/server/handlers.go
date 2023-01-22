@@ -38,9 +38,11 @@ func (s *Server) MapHandlers(e *echo.Echo) error {
 	v1 := e.Group("/api/v1")
 	userGroup := v1.Group("/user")
 	transactionGroup := v1.Group("/transaction")
+	historyGroup := v1.Group("/history")
 
 	// register routes
 	userHttp.MapAuthRoutes(userGroup, userHandlers, mw)
+	userHttp.MapHistoryRoutes(historyGroup, userHandlers, mw)
 	transactionHttp.MapTransactionRoutes(transactionGroup, transactionHandlers, mw)
 
 	return nil

@@ -11,4 +11,5 @@ type UseCase interface {
 
 	GetAccountByUserId(id uint) (*models.ResponseAccount, error)
 	GetTransactionsByUserId(id uint) ([]models.ResponseTransaction, error)
+	GetTransaction(id uint, userId uint) (*models.ResponseTransaction, error)
 }

@@ -124,3 +124,30 @@ func (h *userHandlers) History() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, transactions)
 	}
 }
+
+func (h *userHandlers) GetTranaction() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		res := c.Get("user")
+
+		if _, exists := res.(uint); !exists {
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, "wrong JWT token: `user` not in token", nil))
+		}
+
+		var transaction models.RequestTransaction
+		err := json.NewDecoder(c.Request().Body).Decode(&transaction)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("parse JSON error: %v", err), err))
+		}
+
+		if err := transaction.Validate(); err != nil {
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, err.Error(), err))
+		}
+
+		respTransaction, err := h.userUC.GetTransaction(transaction.ID, res.(uint))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, httpErrors.NewRestError(http.StatusBadRequest, fmt.Sprintf("error getting transactions with user_id %d: %v", res.(uint), err), err))
+		}
+
+		return c.JSON(http.StatusOK, respTransaction)
+	}
+}

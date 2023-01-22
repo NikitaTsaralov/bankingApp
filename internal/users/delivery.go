@@ -9,4 +9,5 @@ type Handlers interface {
 	GetMe() echo.HandlerFunc
 	GetMyAccount() echo.HandlerFunc
 	History() echo.HandlerFunc
+	GetTranaction() echo.HandlerFunc
 }

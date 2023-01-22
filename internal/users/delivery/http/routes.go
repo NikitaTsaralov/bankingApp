@@ -13,5 +13,11 @@ func MapAuthRoutes(usersGroup *echo.Group, h users.Handlers, mw *middleware.Midd
 	usersGroup.Use(mw.AuthJWTMiddleware())
 	usersGroup.GET("/me", h.GetMe())
 	usersGroup.GET("/my_account", h.GetMyAccount())
+
+}
+
+func MapHistoryRoutes(usersGroup *echo.Group, h users.Handlers, mw *middleware.MiddlewareManager) {
+	usersGroup.Use(mw.AuthJWTMiddleware())
 	usersGroup.GET("/operation_history", h.History())
+	usersGroup.GET("/get_transaction", h.GetTranaction())
 }

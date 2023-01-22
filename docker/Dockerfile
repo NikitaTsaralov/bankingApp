@@ -8,4 +8,4 @@ WORKDIR /app
 COPY ./ /app
 
 RUN go mod download
-RUN go build ./cmd/api/main.go -o /bank_app
+# RUN go build ./cmd/api/main.go -o /bank_app

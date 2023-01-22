@@ -1,0 +1,314 @@
+{
+	"info": {
+		"_postman_id": "4c6e14ba-c6fe-4cd1-a6a9-718bf4fe65d8",
+		"name": "API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18197186"
+	},
+	"item": [
+		{
+			"name": "Transaction",
+			"item": [
+				{
+					"name": "put_money",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMSIsImV4cGlyeSI6MTY3NDM5ODc2NCwidXNlcl9pZCI6IjEifQ.6l9vc_565VDTZl2UnosFVprTeYVE4WLZ7C7N--QnGlI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": 1,\n    \"amount\": 100.5\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/api/v1/transaction/put_money",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"transaction",
+								"put_money"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_money",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMiIsImV4cGlyeSI6MTY3NDM5NzExNSwidXNlcl9pZCI6IjIifQ.ic-v5c1OFDes3-ZCM4CiIjzT8KTR-WRVlk7gQWAGsmU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 100\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/api/v1/transaction/get_money",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"transaction",
+								"get_money"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "register_api",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"evgen\",\n    \"email\": \"evgen@mail.ru\",\n    \"password\": \"testtest\"\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/api/v1/user/register",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login_api",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"evgen\",\n    \"email\": \"evgen@mail.ru\",\n    \"password\": \"testtest\"\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/api/v1/user/login",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "me",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsIn5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMSIsImV4cGlyeSI6MTY3NDM5ODQ3MCwidXNlcl9pZCI6IjEifQ.biOasfg8eTrGFRmopd_hGreCY1cjnAso45PmWRvv7jf",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:5000/api/v1/user/me",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "my_accounts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMSIsImV4cGlyeSI6MTY3NDM5ODQ3MCwidXNlcl9pZCI6IjEifQ.biOasfg8eTrGFRmopd_hGreCY1cjnAso45PmWRvv7uc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/api/v1/user/my_account",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"my_account"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "History",
+			"item": [
+				{
+					"name": "operation_history",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMSIsImV4cGlyeSI6MTY3NDM5ODk5NywidXNlcl9pZCI6IjEifQ.yrfB54ufBCYS9NmtSiGoAX_QDWZ38d8hRRMdo0pDz3A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:5000/api/v1/history/operation_history",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"history",
+								"operation_history"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_transaction",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMSIsImV4cGlyeSI6MTY3NDM5ODk5NywidXNlcl9pZCI6IjEifQ.yrfB54ufBCYS9NmtSiGoAX_QDWZ38d8hRRMdo0pDz3A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 3\n}"
+						},
+						"url": {
+							"raw": "127.0.0.1:5000/api/v1/history/get_transaction",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"history",
+								"get_transaction"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
