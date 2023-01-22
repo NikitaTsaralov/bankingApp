@@ -84,7 +84,7 @@ func (c *TransactionConsumer) worker(ch *reconnect.Channel, messages <-chan amqp
 		jsonBytes, err := json.Marshal(gormTransaction)
 		if err != nil {
 			log.Printf("json.Marshal error: %v", err)
-			d.Nack(false, false)
+			// d.Nack(false, false)
 		}
 
 		err = ch.PublishWithContext(ctx,
@@ -99,7 +99,7 @@ func (c *TransactionConsumer) worker(ch *reconnect.Channel, messages <-chan amqp
 			})
 		if err != nil {
 			log.Printf("ch.PublishWithContext error: %v", err)
-			d.Nack(false, false)
+			// d.Nack(false, false)
 		}
 
 		d.Ack(false)
