@@ -12,6 +12,12 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
+
+# Volumes
 pgdata/
-rabbitmq/
+rabbitmq/data
+
+# Others
+.vscode
+__debug_bin

@@ -13,14 +13,15 @@ type Migration struct {
 	database *gorm.DB
 }
 
-func (migration *Migration) Init(config *config.Config) (err error) {
+func Init(config *config.Config) (migration *Migration, err error) {
 	migration.database, err = db.Init(config)
 	if err != nil {
-		return fmt.Errorf("error init PsqlDB: %v", err)
+		return nil, fmt.Errorf("error init PsqlDB: %v", err)
 	}
-	return
+	return migration, nil
 }
 
+// fill tables with prepared data here
 func (migration *Migration) setup() error {
 	return nil
 }
