@@ -32,7 +32,7 @@ func TestMigration(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db, _ := db.Init(tt.config)
+			db, _ := db.NewPsqlGormDB(tt.config)
 			migration := &Migration{
 				database: db,
 			}

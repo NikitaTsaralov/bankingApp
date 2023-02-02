@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/go-playground/validator/v10"
 )
 
 const (
@@ -182,6 +184,10 @@ func parseSqlErrors(err error) RestErr {
 }
 
 func parseValidatorError(err error) RestErr {
+	if fieldErr, ok := err.(validator.ValidationErrors); ok {
+		return NewRestError(http.StatusBadRequest, fieldErr.Error(), fieldErr)
+	}
+
 	if strings.Contains(err.Error(), "Password") {
 		return NewRestError(http.StatusBadRequest, "Invalid password, min length 6", err)
 	}

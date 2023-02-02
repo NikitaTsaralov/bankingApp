@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/NikitaTsaralov/bankingApp/config"
 	"github.com/NikitaTsaralov/bankingApp/migrations"
@@ -9,7 +11,9 @@ import (
 )
 
 func main() {
-	configPath := utils.GetConfigPath("config", "local")
+	fmt.Println("Starting Migration")
+
+	configPath := utils.GetConfigPath("config", os.Getenv("config"))
 	cfgFile, err := config.LoadConfig(configPath)
 	if err != nil {
 		log.Fatalf("LoadConfig cfgPath: %s failed: %v", configPath, err)
@@ -20,7 +24,7 @@ func main() {
 		log.Fatalf("ParseConfig failed: %v", err)
 	}
 
-	migration, err := migrations.Init(cfg)
+	migration, err := migrations.NewMigration(cfg)
 	if err != nil {
 		log.Fatalf("Migration Init failed: %v", err)
 	}
@@ -29,4 +33,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}
+
+	fmt.Println("Migration finshed")
 }

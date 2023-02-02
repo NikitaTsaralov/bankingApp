@@ -5,11 +5,8 @@ import (
 )
 
 type Repository interface {
-	Register(user *models.ResponseUser) (*models.ResponseUser, error)
-	GetUserByName(username string) (*models.ResponseUser, error)
-	GetUserById(id uint) (*models.ResponseUser, error)
+	Register(user *models.User) (*models.User, error)
 
-	GetAccountByUserId(id uint) (*models.ResponseAccount, error)
-	GetTransactionsByUserId(id uint) ([]models.ResponseTransaction, error)
-	GetTransaction(id uint, userId uint) (*models.ResponseTransaction, error)
+	GetById(userID uint) (*models.User, error)
+	GetByEmail(userEmail string) (*models.User, error)
 }

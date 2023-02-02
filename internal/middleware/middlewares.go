@@ -9,14 +9,14 @@ import (
 
 type MiddlewareManager struct {
 	cfg    *config.Config
-	authUC users.UseCase
+	userUC users.UseCase
 	logger *log.Logger
 }
 
-func Init(cfg *config.Config, authUC users.UseCase, logger *log.Logger) *MiddlewareManager {
+func Init(cfg *config.Config, userUC users.UseCase, logger *log.Logger) *MiddlewareManager {
 	return &MiddlewareManager{
 		cfg:    cfg,
-		authUC: authUC,
+		userUC: userUC,
 		logger: logger,
 	}
 }

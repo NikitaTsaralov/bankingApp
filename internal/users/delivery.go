@@ -7,7 +7,4 @@ type Handlers interface {
 	Login() echo.HandlerFunc
 
 	GetMe() echo.HandlerFunc
-	GetMyAccount() echo.HandlerFunc
-	History() echo.HandlerFunc
-	GetTranaction() echo.HandlerFunc
 }

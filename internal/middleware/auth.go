@@ -4,25 +4,52 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/NikitaTsaralov/bankingApp/pkg/httpErrors"
-	"github.com/NikitaTsaralov/bankingApp/pkg/token"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 )
 
 func (mw *MiddlewareManager) validateJWTToken(tokenString string, c echo.Context) error {
-	userId, err := token.ValidateToken(tokenString, mw.cfg)
-	if err != nil {
-		return c.JSON(http.StatusUnauthorized, httpErrors.InvalidJWTToken)
+	if tokenString == "" {
+		return httpErrors.InvalidJWTToken
 	}
 
-	user, err := mw.authUC.GetUserById(userId)
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signin method %v", token.Header["alg"])
+		}
+		secret := []byte(mw.cfg.Server.JwtSecretKey)
+		return secret, nil
+	})
 	if err != nil {
-		return c.JSON(http.StatusNotFound, httpErrors.InvalidJWTToken)
+		return err
 	}
 
-	c.Set("user", user.ID)
+	if !token.Valid {
+		return httpErrors.InvalidJWTToken
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID, ok := claims["id"].(string)
+		if !ok {
+			return httpErrors.InvalidJWTClaims
+		}
+
+		userUintID, err := strconv.ParseUint(userID, 10, 32)
+		if err != nil {
+			return err
+		}
+
+		u, err := mw.userUC.GetById(uint(userUintID))
+		if err != nil {
+			return err
+		}
+
+		c.Set("user", u)
+	}
 	return nil
 }
 

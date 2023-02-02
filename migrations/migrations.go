@@ -13,9 +13,9 @@ type Migration struct {
 	database *gorm.DB
 }
 
-func Init(config *config.Config) (migration *Migration, err error) {
+func NewMigration(config *config.Config) (migration *Migration, err error) {
 	migration = &Migration{}
-	migration.database, err = db.Init(config)
+	migration.database, err = db.NewPsqlGormDB(config)
 	if err != nil {
 		return nil, fmt.Errorf("error init PsqlDB: %v", err)
 	}
@@ -44,7 +44,8 @@ func (migration *Migration) Migrate() error {
 	}
 
 	// create tables
-	if dbc := migration.database.AutoMigrate(&users, &accounts, &transactions); dbc.Error != nil {
+	dbc := migration.database.AutoMigrate(&users, &accounts, &transactions)
+	if dbc.Error != nil {
 		return fmt.Errorf("gorm.DB.AutoMigrate failed: %v", dbc.Error)
 	}
 

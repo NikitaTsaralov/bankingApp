@@ -16,7 +16,7 @@ const (
 )
 
 // Create InitDatabase function
-func Init(c *config.Config) (DB *gorm.DB, err error) {
+func NewPsqlGormDB(c *config.Config) (DB *gorm.DB, err error) {
 	dataSourceName := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s",
 		c.Postgres.PostgresqlHost,
 		c.Postgres.PostgresqlPort,

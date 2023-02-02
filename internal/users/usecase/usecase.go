@@ -1,13 +1,15 @@
 package usecase
 
 import (
-	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/NikitaTsaralov/bankingApp/config"
 	"github.com/NikitaTsaralov/bankingApp/internal/models"
 	"github.com/NikitaTsaralov/bankingApp/internal/users"
-	"github.com/NikitaTsaralov/bankingApp/pkg/token"
+	"github.com/NikitaTsaralov/bankingApp/pkg/httpErrors"
+	"github.com/NikitaTsaralov/bankingApp/pkg/utils"
+	"github.com/pkg/errors"
 )
 
 type userUC struct {
@@ -24,73 +26,72 @@ func Init(cfg *config.Config, usersRepo users.Repository, logger *log.Logger) us
 	}
 }
 
-func (uc *userUC) Register(user *models.ResponseUser) (*models.UserWithToken, error) {
-	user, err := uc.userRepo.Register(user)
+func (uc *userUC) Register(user *models.User) (*models.UserWithToken, error) {
+	err := utils.ValidateStruct(user)
 	if err != nil {
-		return nil, fmt.Errorf("error transactionsRepo.Register: %v", err)
+		return nil, err
 	}
 
-	token, err := token.PrepareToken(user, uc.cfg)
+	existsUser, err := uc.userRepo.GetByEmail(user.Email)
+	if existsUser != nil || err == nil {
+		return nil, httpErrors.NewRestErrorWithMessage(http.StatusBadRequest, httpErrors.ErrEmailAlreadyExists, nil)
+	}
+
+	err = user.PrepareCreate()
 	if err != nil {
-		return nil, fmt.Errorf("error token.PrepareToken: %v", err)
+		return nil, httpErrors.NewBadRequestError(errors.Wrap(err, "userUC.Register.PrepareCreate"))
+	}
+
+	createdUser, err := uc.userRepo.Register(user)
+	if err != nil {
+		return nil, err
+	}
+	createdUser.SanitizePassword()
+
+	token, err := utils.GenerateJWTToken(createdUser, uc.cfg)
+	if err != nil {
+		return nil, httpErrors.NewInternalServerError(errors.Wrap(err, "userUC.Register.GenerateJWTToken"))
 	}
 
 	return &models.UserWithToken{
-		User:  user,
+		User:  createdUser,
 		Token: token,
 	}, nil
 }
 
-func (uc *userUC) Login(user *models.ResponseUser) (*models.UserWithToken, error) {
-	repoUser, err := uc.userRepo.GetUserByName(user.Username)
+func (uc *userUC) Login(user *models.User) (*models.UserWithToken, error) {
+	err := utils.ValidateStruct(user)
 	if err != nil {
-		return nil, fmt.Errorf("error transactionsRepo.Login: %v", err)
+		return nil, err
 	}
 
-	if err := user.ComparePassword(repoUser.Password); err != nil {
-		return nil, fmt.Errorf("invalid credentials")
-	}
-	user.Password = "********"
-
-	token, err := token.PrepareToken(repoUser, uc.cfg)
+	foundUser, err := uc.userRepo.GetByEmail(user.Email)
 	if err != nil {
-		return nil, fmt.Errorf("error token.PrepareToken: %v", err)
+		return nil, errors.Wrap(err, "userUC.Login.GetByEmail")
+	}
+
+	if err := user.ComparePassword(foundUser.Password); err != nil {
+		return nil, httpErrors.NewUnauthorizedError(errors.Wrap(err, "userUC.Login.ComparePassword"))
+	}
+	foundUser.SanitizePassword()
+
+	token, err := utils.GenerateJWTToken(foundUser, uc.cfg)
+	if err != nil {
+		return nil, httpErrors.NewInternalServerError(errors.Wrap(err, "userUC.Register.GenerateJWTToken"))
 	}
 
 	return &models.UserWithToken{
-		User:  repoUser,
+		User:  foundUser,
 		Token: token,
 	}, nil
 }
 
-func (uc *userUC) GetUserById(id uint) (*models.ResponseUser, error) {
-	repoUser, err := uc.userRepo.GetUserById(id)
+func (uc *userUC) GetById(id uint) (*models.User, error) {
+	foundUser, err := uc.userRepo.GetById(id)
 	if err != nil {
-		return nil, fmt.Errorf("error userRepo.GetById: %v", err)
+		return nil, errors.Wrap(err, "userUC.Login.GetById")
 	}
-	return repoUser, nil
-}
+	foundUser.SanitizePassword()
 
-func (uc *userUC) GetAccountByUserId(userId uint) (*models.ResponseAccount, error) {
-	repoAccounts, err := uc.userRepo.GetAccountByUserId(userId)
-	if err != nil {
-		return nil, fmt.Errorf("error userRepo.GetAccountByUserId: %v", err)
-	}
-	return repoAccounts, nil
-}
-
-func (uc *userUC) GetTransactionsByUserId(userId uint) ([]models.ResponseTransaction, error) {
-	repoTransactions, err := uc.userRepo.GetTransactionsByUserId(userId)
-	if err != nil {
-		return nil, fmt.Errorf("error userRepo.GetTransactionsByUserId: %v", err)
-	}
-	return repoTransactions, nil
-}
-
-func (uc *userUC) GetTransaction(id uint, userId uint) (*models.ResponseTransaction, error) {
-	repoTransaction, err := uc.userRepo.GetTransaction(id, userId)
-	if err != nil {
-		return nil, fmt.Errorf("error userRepo.GetTransactionsByUserId: %v", err)
-	}
-	return repoTransaction, nil
+	return foundUser, nil
 }

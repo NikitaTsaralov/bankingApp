@@ -2,7 +2,7 @@ server:
   AppVersion: 1.0.0
   Port: :5000
   QueueOut: task_queue_1
-  OueueIn: task_queue_2
+  QueueIn: task_queue_2
   Mode: Development
   CtxTimeoutBroker: 10
   JwtSecretKey: MyBestSecuredKey
@@ -16,7 +16,7 @@ logger:
   Level: info
 
 postgres:
-  PostgresqlHost: postgesql
+  PostgresqlHost: 127.0.0.1
   PostgresqlPort: 5432
   PostgresqlUser: postgres
   PostgresqlPassword: postgres
@@ -25,7 +25,7 @@ postgres:
   PgDriver: pgx
 
 rabbit:
-  RabbitHost: rabbitmq
+  RabbitHost: 127.0.0.1
   RabbitPort: 5672
   RabbitUser: guest
   RabbitPassword: guest

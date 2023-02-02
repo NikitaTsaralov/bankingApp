@@ -1,50 +1,19 @@
 package models
 
 import (
-	"fmt"
-
-	"github.com/go-playground/validator/v10"
 	"github.com/jinzhu/gorm"
 )
 
-type Transaction struct {
+type TransactionModel struct {
 	gorm.Model
 	AccountId uint
-	Account   Account `gorm:"foreignKey:AccountId"`
+	Account   AccountModel `gorm:"foreignKey:AccountId"`
 	Amount    float64
 }
 
-type ResponseTransaction struct {
+type Transaction struct {
 	ID        uint    `json:"id,omitempty"`
 	AccountId uint    `json:"account_id"`
-	Amount    float64 `json:"amount" validate:"required"`
+	Amount    float64 `json:"amount" validate:"required,gte=0"`
 	Status    string  `json:"status_msg,omitempty"`
-}
-
-type RequestTransaction struct {
-	ID uint `json:"id" validate:"required"`
-}
-
-func (transaction *ResponseTransaction) Validate() error {
-	validate := validator.New()
-	err := validate.Struct(transaction)
-	if err != nil {
-		return fmt.Errorf("validation error: %v", err)
-	}
-
-	if transaction.Amount <= 0 {
-		return fmt.Errorf("validation error: you cannot put %v money", transaction.Amount)
-	}
-
-	return nil
-}
-
-func (transaction *RequestTransaction) Validate() error {
-	validate := validator.New()
-	err := validate.Struct(transaction)
-	if err != nil {
-		return fmt.Errorf("validation error: %v", err)
-	}
-
-	return nil
 }

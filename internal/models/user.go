@@ -1,47 +1,51 @@
 package models
 
 import (
-	"fmt"
+	"strings"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type User struct {
+type UserModel struct {
 	gorm.Model
-	Username string `gorm:"unique;not null"`
-	Email    string `gorm:"unique;not null"`
-	Password string `gorm:"not null"`
+	FirstName string `gorm:"not null"`
+	LastName  string `gorm:"not null"`
+	Email     string `gorm:"unique;not null"`
+	Password  string `gorm:"not null"`
+}
+
+type User struct {
+	ID        uint   `json:"id,omitempty" validate:"omitempty"`
+	FirstName string `json:"first_name" validate:"lte=30"`
+	LastName  string `json:"last_name" validate:"lte=30"`
+	Email     string `json:"email" validate:"required,lte=60,email"`
+	Password  string `json:"password,omitempty" validate:"omitempty,required,gte=8"`
 }
 
 type UserWithToken struct {
-	User  *ResponseUser `json:"user"`
-	Token string        `json:"token"`
+	User  *User  `json:"user"`
+	Token string `json:"token"`
 }
 
-type ResponseUser struct {
-	ID       uint            `json:"id,omitempty"`
-	Username string          `json:"username" validate:"required"`
-	Email    string          `json:"email" validate:"email,required"`
-	Password string          `json:"password" validate:"required"`
-	Account  ResponseAccount `json:"account,omitempty"`
-}
+func (u *User) PrepareCreate() error {
+	u.Email = strings.ToLower(strings.TrimSpace(u.Email))
+	u.Password = strings.TrimSpace(u.Password)
 
-func (user *ResponseUser) Validate() error {
-	validate := validator.New()
-	err := validate.Struct(user)
-	if err != nil {
-		return fmt.Errorf("validation error: %v", err)
+	if err := u.HashPassword(); err != nil {
+		return err
 	}
 
-	if len(user.Password) < 8 {
-		return fmt.Errorf("validation error: password too short")
-	}
 	return nil
 }
 
-func (user *ResponseUser) HashPassword() error {
+// Sanitize user password
+func (u *User) SanitizePassword() {
+	u.Password = ""
+}
+
+// Hash user password with bcrypt
+func (user *User) HashPassword() error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
@@ -50,7 +54,8 @@ func (user *ResponseUser) HashPassword() error {
 	return nil
 }
 
-func (user *ResponseUser) ComparePassword(password string) error {
+// Compare user password and payload
+func (user *User) ComparePassword(password string) error {
 	if err := bcrypt.CompareHashAndPassword([]byte(password), []byte(user.Password)); err != nil {
 		return err
 	}
